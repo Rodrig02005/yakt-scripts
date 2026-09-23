@@ -1,8 +1,15 @@
 #!/system/bin/sh
-# YAKT_VERSION=2.0.0
+# YAKT_VERSION=2.0.1
 
 INFO_LOG="/data/data/com.notzeetaa.yakt/files/yakt.log"
 ERROR_LOG="/data/data/com.notzeetaa.yakt/files/error.log"
+# Ensure the app user can write to the logs on subsequent runs
+APP_UID=$(stat -c %u /data/data/com.notzeetaa.yakt/files 2>/dev/null)
+if [ -n "$APP_UID" ]; then
+    touch "$INFO_LOG" "$ERROR_LOG"
+    chown "$APP_UID:$APP_UID" "$INFO_LOG" "$ERROR_LOG" 2>/dev/null
+    chmod 644 "$INFO_LOG" "$ERROR_LOG"
+fi
 
 log_info()  { echo "$1" >> "$INFO_LOG"; }
 log_error() { echo "$1" >> "$ERROR_LOG"; }
